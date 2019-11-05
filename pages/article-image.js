@@ -37,7 +37,10 @@ const Page = () => {
     "author-img",
     ""
   );
-  const [dim, dimChanged] = createState(router, "dim", 600, {
+  const [width, widthChanged] = createState(router, "w", 600, {
+    parseQuery: s => parseInt(s, 10)
+  });
+  const [height, heightChanged] = createState(router, "h", 600, {
     parseQuery: s => parseInt(s, 10)
   });
   const [foregroundColor, foregroundColorChanged] = createState(
@@ -97,7 +100,8 @@ const Page = () => {
       grid
     );
   }, [
-    dim,
+    width,
+    height,
     canvas.current,
     title,
     img,
@@ -111,9 +115,10 @@ const Page = () => {
     <div>
       <canvas
         ref={canvas}
-        width={dim}
-        height={dim}
+        width={width}
+        height={height}
         style={{
+          '@import': "url('https://fonts.googleapis.com/css?family=Patua+One&display=swap')",
           border: "3px solid black",
           float: "left",
           marginRight: "10px"
@@ -137,7 +142,8 @@ const Page = () => {
           value={authorImgSrc}
         />
         <br />
-        <input type="number" min="100" value={dim} onChange={dimChanged} />
+        <input type="number" min="100" value={width} onChange={widthChanged} />
+        <input type="number" min="100" value={height} onChange={heightChanged} />
         <br />
         <SketchPicker
           color={foregroundColor}
@@ -241,7 +247,8 @@ function loadAndPaintImage(
     const padding = canvas.width / 30;
     const lines = title.split(/\n/);
     ctx.save();
-    ctx.font = `${nominalFontSize}pt serif`;
+    const fontFamily = "'Patua One'";
+    ctx.font = `${nominalFontSize}pt ${fontFamily}`;
     const metrics = lines.map(line => ctx.measureText(line));
     const nominalRight = Math.max(
       ...metrics.map(m => m.actualBoundingBoxRight)
@@ -259,7 +266,7 @@ function loadAndPaintImage(
     const vscale = (canvas.height - padding * 2) / nominalHeight;
     const scale = Math.min(hscale, vscale);
     const fontSize = Math.floor(scale * nominalFontSize);
-    ctx.font = `${fontSize}pt serif`;
+    ctx.font = `${fontSize}pt ${fontFamily}`;
     const x = padding + nominalLeft * scale;
     const y = padding;
     const lineHeight = nominalLineHeight * scale;
