@@ -31,7 +31,11 @@ const Page = () => {
   const [title, titleChanged] = createState(router, "title", "", {
     parseQuery: (q) => q.replace(/\\n/g, "\n"),
   });
-  const [imgSrc, imgSrcChanged] = createState(router, "img", "");
+  const [imgSrc, imgSrcChanged] = createState(
+    router,
+    "img",
+    "/software-ascending.png"
+  );
   const [authorImgSrc, authorImgSrcChanged] = createState(
     router,
     "author-img",
@@ -336,7 +340,7 @@ function loadAndPaintImage(
     const x = padding + nominalLeft * scale;
     const y = padding;
     const lineHeight = nominalLineHeight * scale;
-    const step1 = canvas.width / 300;
+    const step1 = canvas.width / 1200;
     const step2 = 2 * step1;
     ctx.save();
     ctx.fillStyle = backgroundColor;
@@ -349,7 +353,7 @@ function loadAndPaintImage(
       drop-shadow(${step2}px ${-step2}px 0 ${backgroundColor})
       drop-shadow(${-step2}px ${step2}px 0 ${backgroundColor})
       drop-shadow(${-step2}px ${-step2}px 0 ${backgroundColor})
-      blur(${canvas.width / 300}px)
+      blur(${canvas.width / 900}px)
       opacity(40%)
     `;
     lines.forEach((line, idx) => {
