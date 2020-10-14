@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "next": "^9.1.2",
+    "next": "^9.5.5",
     "random": "^2.1.1",
     "react": "^16.11.0",
     "react-color": "^2.17.3",
