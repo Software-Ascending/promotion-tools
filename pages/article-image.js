@@ -7,7 +7,7 @@ function createState(
   router,
   name,
   initialValue,
-  { parseQuery = v => v, valueFromEvent = e => e.target.value } = {}
+  { parseQuery = (v) => v, valueFromEvent = (e) => e.target.value } = {}
 ) {
   const [val, setVal] = useState(initialValue);
 
@@ -17,7 +17,7 @@ function createState(
     }
   }, [router.query[name]]);
 
-  const onChange = useCallback(e => {
+  const onChange = useCallback((e) => {
     setVal(valueFromEvent(e));
   }, []);
 
@@ -29,26 +29,30 @@ const Page = () => {
   const canvas = useRef();
 
   const [title, titleChanged] = createState(router, "title", "", {
-    parseQuery: q => q.replace(/\\n/g, "\n")
+    parseQuery: (q) => q.replace(/\\n/g, "\n"),
   });
-  const [imgSrc, imgSrcChanged] = createState(router, "img", "");
+  const [imgSrc, imgSrcChanged] = createState(
+    router,
+    "img",
+    "/software-ascending.png"
+  );
   const [authorImgSrc, authorImgSrcChanged] = createState(
     router,
     "author-img",
     ""
   );
   const [width, widthChanged] = createState(router, "w", 600, {
-    parseQuery: s => parseInt(s, 10)
+    parseQuery: (s) => parseInt(s, 10),
   });
   const [height, heightChanged] = createState(router, "h", 600, {
-    parseQuery: s => parseInt(s, 10)
+    parseQuery: (s) => parseInt(s, 10),
   });
   const [foregroundColor, foregroundColorChanged] = createState(
     router,
     "fg",
     "black",
     {
-      valueFromEvent: color => color.hex
+      valueFromEvent: (color) => color.hex,
     }
   );
   const [backgroundColor, backgroundColorChanged] = createState(
@@ -56,7 +60,7 @@ const Page = () => {
     "bg",
     "white",
     {
-      valueFromEvent: color => color.hex
+      valueFromEvent: (color) => color.hex,
     }
   );
 
@@ -108,7 +112,7 @@ const Page = () => {
     router.query.gravity,
     authorImg,
     backgroundColor,
-    foregroundColor
+    foregroundColor,
   ]);
 
   return (
@@ -118,41 +122,107 @@ const Page = () => {
         width={width}
         height={height}
         style={{
-          '@import': "url('https://fonts.googleapis.com/css?family=Patua+One&display=swap')",
+          "@import":
+            "url('https://fonts.googleapis.com/css?family=Patua+One&display=swap')",
           border: "3px solid black",
           float: "left",
-          marginRight: "10px"
+          marginRight: "10px",
         }}
       />
       <form action="">
-        <textarea
-          value={title}
-          onChange={titleChanged}
-          style={{
-            width: "400px",
-            height: "100px"
-          }}
-        />
-        <br />
-        <input type="text" onChange={imgSrcChanged} value={imgSrc} />
-        <br />
-        <input
-          type="text"
-          onChange={authorImgSrcChanged}
-          value={authorImgSrc}
-        />
-        <br />
-        <input type="number" min="100" value={width} onChange={widthChanged} />
-        <input type="number" min="100" value={height} onChange={heightChanged} />
-        <br />
-        <SketchPicker
-          color={foregroundColor}
-          onChangeComplete={foregroundColorChanged}
-        />
-        <SketchPicker
-          color={backgroundColor}
-          onChangeComplete={backgroundColorChanged}
-        />
+        <table>
+          <tbody>
+            <tr>
+              <td colspan="4">
+                <textarea
+                  value={title}
+                  placeholder={
+                    "Enter post title here.\nUse linebreaks to set wrap."
+                  }
+                  onChange={titleChanged}
+                  style={{
+                    width: "100%",
+                    height: "100px",
+                  }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2" style={{ textAlign: "right" }}>
+                <label for="imgSrc">Image URL </label>
+              </th>
+              <td colspan="2" style={{ textAlign: "left" }}>
+                <input
+                  id="imgSrc"
+                  type="text"
+                  placeholder="URL For Main Image"
+                  style={{ minWidth: "40em", width: "100%" }}
+                  onChange={imgSrcChanged}
+                  value={imgSrc}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th colspan="2" style={{ textAlign: "right" }}>
+                <label for="authorImgSrc">Author Image URL </label>
+              </th>
+              <td colspan="2" style={{ textAlign: "left" }}>
+                <input
+                  id="authorImgSrc"
+                  type="text"
+                  placeholder="URL For Author Image"
+                  style={{ minWidth: "40em", width: "100%" }}
+                  onChange={authorImgSrcChanged}
+                  value={authorImgSrc}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th style={{ textAlign: "right" }}>
+                <label for="width">Width (px)</label>
+              </th>
+              <td>
+                <input
+                  id="width"
+                  type="number"
+                  min="100"
+                  value={width}
+                  onChange={widthChanged}
+                />
+              </td>
+              <th style={{ textAlign: "right" }}>
+                <label for="height">Height (px)</label>
+              </th>
+              <td>
+                <input
+                  id="height"
+                  type="number"
+                  min="100"
+                  value={height}
+                  onChange={heightChanged}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <label>Foreground Text Color:</label>
+                <br />
+                <SketchPicker
+                  color={foregroundColor}
+                  onChangeComplete={foregroundColorChanged}
+                />
+              </td>
+              <td colspan="2">
+                <label>Text Offset Color:</label>
+                <br />
+                <SketchPicker
+                  color={backgroundColor}
+                  onChangeComplete={backgroundColorChanged}
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </form>
     </div>
   );
@@ -249,15 +319,15 @@ function loadAndPaintImage(
     ctx.save();
     const fontFamily = "'Patua One'";
     ctx.font = `${nominalFontSize}pt ${fontFamily}`;
-    const metrics = lines.map(line => ctx.measureText(line));
+    const metrics = lines.map((line) => ctx.measureText(line));
     const nominalRight = Math.max(
-      ...metrics.map(m => m.actualBoundingBoxRight)
+      ...metrics.map((m) => m.actualBoundingBoxRight)
     );
     const nominalLeft = Math.min(
-      ...metrics.map(m => Math.min(0, m.actualBoundingBoxLeft))
+      ...metrics.map((m) => Math.min(0, m.actualBoundingBoxLeft))
     );
     const nominalLineHeight = Math.max(
-      ...metrics.map(m => m.actualBoundingBoxAscent)
+      ...metrics.map((m) => m.actualBoundingBoxAscent)
     );
     const nominalHeight =
       nominalLineHeight *
@@ -270,7 +340,7 @@ function loadAndPaintImage(
     const x = padding + nominalLeft * scale;
     const y = padding;
     const lineHeight = nominalLineHeight * scale;
-    const step1 = canvas.width / 300;
+    const step1 = canvas.width / 1200;
     const step2 = 2 * step1;
     ctx.save();
     ctx.fillStyle = backgroundColor;
@@ -283,7 +353,7 @@ function loadAndPaintImage(
       drop-shadow(${step2}px ${-step2}px 0 ${backgroundColor})
       drop-shadow(${-step2}px ${step2}px 0 ${backgroundColor})
       drop-shadow(${-step2}px ${-step2}px 0 ${backgroundColor})
-      blur(${canvas.width / 300}px)
+      blur(${canvas.width / 900}px)
       opacity(40%)
     `;
     lines.forEach((line, idx) => {
@@ -305,7 +375,7 @@ function paintGrid(ctx, width, height, fillHeight, grid) {
   function gridLocation(i, j) {
     return [
       width - i * cellSize + cellSize / 2,
-      height - fillHeight + j * cellSize + cellSize / 2
+      height - fillHeight + j * cellSize + cellSize / 2,
     ];
   }
   for (let rowIdx = 0; rowIdx < rows; rowIdx++) {
